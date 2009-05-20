@@ -1,7 +1,7 @@
 package com.maethorechannen.iscal
 import scala.util.parsing.combinator._
 class ContentLineParser extends RegexParsers {
-	def contentline: Parser[Any] = name ~ opt(rep((";" ~ param ))) ~ ":" ~ value ~ crlf
+	def contentline: Parser[Any] = name ~ opt(rep((";" ~ param ))) ~ ":" ~ value //~ crlf
    // This ABNF is just a general definition for an initial parsing
    // of the content line into its property name, parameter list,
    // and value string
@@ -27,20 +27,20 @@ class ContentLineParser extends RegexParsers {
 	def paramtext: Parser[Any] = opt(rep(safe_char))
 	def value: Parser[Any] = opt(rep(value_char))
 	def quoted_string: Parser[Any] = dquote ~ opt(rep(qsafe_char)) ~ dquote
-	def non_us_ascii: Parser[Any] = "[0x80-0xF8 ]"// Use restricted by charset parameter on outer MIME object (UTF-8 preferred)
-	def qsafe_char: Parser[Any] = wsp | "[0x21]" | "[0x23-0x7E]" | non_us_ascii // Any character except CTLs and DQUOTE
-	def safe_char: Parser[Any]   = wsp | "[0x21]" | "[0x23-0x2B]" | "[0x2D-0x39]" | "[0x3C-0x7E]" | non_us_ascii // Any character except CTLs, DQUOTE, ";", ":", ","
-	def value_char = wsp | "[0x21-0x7E]" | non_us_ascii // Any textual character
-	def cr = "[0x0D]" // carriage return
-	def lf: Parser[Any] = "[0x0A]" // line feed
+	def non_us_ascii: Parser[Any] = """[\x80-\xF8]""".r // Use restricted by charset parameter on outer MIME object (UTF-8 preferred)
+	def qsafe_char: Parser[Any] = wsp | """[\x21]""".r | """[\x23-\x7E]""".r | non_us_ascii // Any character except CTLs and DQUOTE
+	def safe_char: Parser[Any]   = wsp | """[\x21]""".r | """[\x23-\x2B]""".r | """[\x2D-\x39]""".r | """[\x3C-\x7E]""".r | non_us_ascii // Any character except CTLs, DQUOTE, ";", ":", ","
+	def value_char: Parser[Any] = wsp | """[\x21-\x7E]""".r | non_us_ascii // Any textual character
+	def cr: Parser[Any] = """[\x0D]""".r // carriage return
+	def lf: Parser[Any] = """[\x0A]""".r // line feed
 	def crlf: Parser[Any] = cr ~ lf // Internet standard newline
-	def ctl: Parser[Any] = "[0x00-0x08]" | "[0x0A-0x1F]" | "[0x7F]" //Controls
-	def alpha: Parser[Any] = "[0x41-0x5A]" | "[0x61-0x7A]" // A-Z | a-z
-	def digit: Parser[Any] = "[0x30-0x039]" // 0-9
-    def dquote: Parser[Any]= "[0x22]" // Quotation Mark
+	def ctl: Parser[Any] = """[\x00-\x08]""".r | """[\x0A-\x1F]""".r | """[\x7F]""".r //Controls
+	def alpha: Parser[Any] = """[\x41-\x5A]""".r | """[\x61-\x7A]""".r // A-Z | a-z
+	def digit: Parser[Any] = """[\x30-\x39]""".r // 0-9
+    def dquote: Parser[Any]= """[\x22]""".r // Quotation Mark
     def wsp: Parser[Any] = space | htab
-	def space:Parser[Any] = "[0x20]"
-	def htab: Parser[Any] = "[0x09]"
+	def space:Parser[Any] = """[\x20]""".r
+	def htab: Parser[Any] = """[\x09]""".r
 
 }
 
