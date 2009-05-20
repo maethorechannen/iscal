@@ -1,7 +1,7 @@
 import scala.collection.mutable.ListBuffer
 
 class ContentLineParser {
-def contentline        = name *(";" param ) ":" value crlf
+	def contentline        = name *(";" param ) ":" value crlf
    // This ABNF is just a general definition for an initial parsing
    // of the content line into its property name, parameter list,
    // and value string
