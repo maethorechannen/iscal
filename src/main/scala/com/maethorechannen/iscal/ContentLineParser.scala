@@ -1,7 +1,7 @@
 package com.maethorechannen.iscal
 import scala.util.parsing.combinator._
 class ContentLineParser extends RegexParsers {
-	def contentline: Parser[Any] = name ~ opt(rep((";" ~ param ))) ~ ":" ~ value //~ crlf
+	def contentline: Parser[Any] = name ~ opt(rep((";" ~> param ))) <~ ":" ~> value //~ crlf
    // This ABNF is just a general definition for an initial parsing
    // of the content line into its property name, parameter list,
    // and value string
@@ -10,10 +10,10 @@ class ContentLineParser extends RegexParsers {
    // described above. When generating a content line, lines
    // longer than 75 octets SHOULD be folded according to
    // the folding procedure described above.
-   	def name               = x_name | iana_token
-	def iana_token = rep(alpha | digit | "-")
+   	def name: Parser[Any] = x_name | iana_token
+	def iana_token: Parser[Any] = rep(alpha | digit | "-")  ^^ (_.mkString)
 // iCalendar identifier registered with IANA
-	def x_name             = "X-" ~ opt(vendorid ~ "-") ~ rep(alpha | digit | "-")
+	def x_name: Parser[Any] = "X-" ~ opt(vendorid ~ "-") ~ rep(alpha | digit | "-")
 // Reservered for experimental use. Not intended for use in
 // released products.
 
@@ -24,8 +24,8 @@ class ContentLineParser extends RegexParsers {
   // precise parameter ABNF.
    	def param_name: Parser[Any] = iana_token | x_name
 	def param_value: Parser[Any] = paramtext | quoted_string
-	def paramtext: Parser[Any] = opt(rep(safe_char))
-	def value: Parser[Any] = opt(rep(value_char))
+	def paramtext: Parser[Any] = opt(rep(safe_char) ^^ (_.mkString)) 
+	def value: Parser[Any] = opt(rep(value_char) ^^ (_.mkString))
 	def quoted_string: Parser[Any] = dquote ~ opt(rep(qsafe_char)) ~ dquote
 	def non_us_ascii: Parser[Any] = """[\x80-\xF8]""".r // Use restricted by charset parameter on outer MIME object (UTF-8 preferred)
 	def qsafe_char: Parser[Any] = wsp | """[\x21]""".r | """[\x23-\x7E]""".r | non_us_ascii // Any character except CTLs and DQUOTE

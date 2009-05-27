@@ -4,7 +4,7 @@
   <artifactId>iscal</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
-    <scala.version>2.7.1</scala.version>
+    <scala.version>2.7.3</scala.version>
   </properties>
 
   <repositories>
